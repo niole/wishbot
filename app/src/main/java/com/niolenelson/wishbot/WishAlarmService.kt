@@ -22,6 +22,10 @@ import java.util.*
  */
 class WishAlarmService : Service() {
 
+    private var alarmSet: Boolean = false
+
+    private val RECEIVER_INTENT_ACTION_ID = "com.niole.nelson.wishbot"
+
     private val channelId = "wishalarmbot"
 
     private var notificationManager: NotificationManager? = null
@@ -38,28 +42,16 @@ class WishAlarmService : Service() {
             val notification = NotificationCompat.Builder(applicationContext, channelId)
                 .setPriority(0)
                 .setSmallIcon(R.drawable.ic_android_black_24dp)
-                .setContentText("MAKE A WISH")
+                .setContentText("IT'S TIME TO MAKE A WISH")
                 .build()
             notificationManager?.notify(0, notification)
+            alarmSet = false
         }
     }
 
     override fun onCreate() {
         super.onCreate()
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        this.registerReceiver(receiver, IntentFilter("STUFF"))
-        val intent = Intent()
-        intent.action = "STUFF"
-        val pendingIntent = PendingIntent.getBroadcast(this, 1, intent, FLAG_CANCEL_CURRENT)
-        val info = AlarmManager.AlarmClockInfo(Date().time + 5000, pendingIntent)
-        val alarmManager: AlarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setAlarmClock(info, pendingIntent)
-
-        notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        val channel = NotificationChannel(channelId, channelId, NotificationManager.IMPORTANCE_HIGH)
-        notificationManager?.createNotificationChannel(channel)
+        setupAlarms()
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -68,6 +60,30 @@ class WishAlarmService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.i("LocalService", "Received start id $startId: $intent")
+        if (!alarmSet) {
+            setupAlarms()
+        }
         return Service.START_NOT_STICKY
+    }
+
+    private fun setupAlarms() {
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        this.registerReceiver(receiver, IntentFilter(RECEIVER_INTENT_ACTION_ID))
+        val intent = Intent()
+        intent.action = RECEIVER_INTENT_ACTION_ID
+        val pendingIntent = PendingIntent.getBroadcast(this, 1, intent, FLAG_CANCEL_CURRENT)
+        val nextAlertTime = WishCalculator.getNextWishTime()
+
+        val info = AlarmManager.AlarmClockInfo(nextAlertTime, pendingIntent)
+        val alarmManager: AlarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setAlarmClock(info, pendingIntent)
+
+        notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val channel = NotificationChannel(channelId, channelId, NotificationManager.IMPORTANCE_HIGH)
+        notificationManager?.createNotificationChannel(channel)
+
+        alarmSet = true
     }
 }
