@@ -59,7 +59,7 @@ class WishAlarmService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.i("LocalService", "Received start id $startId: $intent")
+        Log.i("WishAlarmService", "Received start id $startId: $intent")
         if (!alarmSet) {
             setupAlarms()
         }
