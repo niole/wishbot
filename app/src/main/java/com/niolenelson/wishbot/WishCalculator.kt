@@ -6,10 +6,13 @@ import java.time.format.DateTimeFormatter
 /**
  * wish times are always same number for day, month, hour, minute
  */
-object WishCalculator {
+open class WishCalculator {
+    open fun getCurrentDate(): LocalDateTime {
+        return LocalDateTime.now()
+    }
 
-    fun isWishTime(): Boolean {
-        val date = LocalDateTime.now()
+    open fun isWishTime(): Boolean {
+        val date = getCurrentDate()
         val month = date.monthValue
         val day = date.dayOfMonth
         val hour = date.hour
@@ -18,7 +21,7 @@ object WishCalculator {
         return  month == day && month == hour && month == minute
     }
 
-    fun getNextWishTime(): Long {
+    open fun getNextWishTime(): Long {
         val date = LocalDateTime.now()
         val year = date.year
         val month = date.monthValue
