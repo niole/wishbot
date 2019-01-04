@@ -51,7 +51,9 @@ class WishAlarmService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        setupAlarms()
+        if (!alarmSet) {
+            setupAlarms()
+        }
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -60,9 +62,6 @@ class WishAlarmService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.i("WishAlarmService", "Received start id $startId: $intent")
-        if (!alarmSet) {
-            setupAlarms()
-        }
         return Service.START_NOT_STICKY
     }
 
@@ -72,11 +71,11 @@ class WishAlarmService : Service() {
         this.registerReceiver(receiver, IntentFilter(RECEIVER_INTENT_ACTION_ID))
         val intent = Intent()
         intent.action = RECEIVER_INTENT_ACTION_ID
+        val alarmManager: AlarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pendingIntent = PendingIntent.getBroadcast(this, 1, intent, FLAG_CANCEL_CURRENT)
         val nextAlertTime = WishCalculator.getNextWishTime()
 
         val info = AlarmManager.AlarmClockInfo(nextAlertTime, pendingIntent)
-        val alarmManager: AlarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.setAlarmClock(info, pendingIntent)
 
         notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
