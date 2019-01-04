@@ -26,15 +26,15 @@ class WishCalculatorUnitTest {
 
     @Test
     fun is_wish_time_when_month_day_hour_minute_equal() {
-        val wishTime = LocalDateTime.of(1992, 5, 5, 5, 5)
-        `when`(wC.getCurrentDate()).thenReturn(wishTime)
+        val currentDate = LocalDateTime.of(1992, 5, 5, 5, 5)
+        `when`(wC.getCurrentDate()).thenReturn(currentDate)
         assertTrue(wC.isWishTime())
     }
 
     @Test
     fun isnt_wish_time_when_month_day_hour_minute_not_equal() {
-        val wishTime = LocalDateTime.of(1992, 5, 5, 5, 6)
-        `when`(wC.getCurrentDate()).thenReturn(wishTime)
+        val currentDate = LocalDateTime.of(1992, 5, 5, 5, 6)
+        `when`(wC.getCurrentDate()).thenReturn(currentDate)
         assertFalse(wC.isWishTime())
     }
 }
