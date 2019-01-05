@@ -15,6 +15,8 @@ import android.provider.AlarmClock
 import android.support.v4.app.AlarmManagerCompat.setAlarmClock
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -39,10 +41,13 @@ class WishAlarmService : Service() {
 
     val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            val activitySpec = Intent(context, MainActivity::class.java)
+            val activityOpener = PendingIntent.getActivity(context, 1, activitySpec, PendingIntent.FLAG_UPDATE_CURRENT)
             val notification = NotificationCompat.Builder(applicationContext, channelId)
                 .setPriority(0)
                 .setSmallIcon(R.drawable.ic_android_black_24dp)
-                .setContentText("IT'S TIME TO MAKE A WISH")
+                .setContentText("It's time to make a wish!")
+                .setContentIntent(activityOpener)
                 .build()
             notificationManager?.notify(0, notification)
             alarmSet = false
