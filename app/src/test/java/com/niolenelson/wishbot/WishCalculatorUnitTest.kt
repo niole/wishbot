@@ -69,4 +69,15 @@ class WishCalculatorUnitTest {
         assertEquals(Date(expectedDate), Date(WishCalculator.getNextWishTime(currentDate)))
     }
 
+    @Test
+    fun should_roll_over_to_next_year_if_current_date_at_december() {
+        val currentDate = LocalDateTime.of(1992, 12, 13, 12, 12)
+        val expectedDate = LocalDateTime.of(1993, 1, 1, 1, 1)
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
+
+        assertEquals(Date(expectedDate), Date(WishCalculator.getNextWishTime(currentDate)))
+    }
+
 }
