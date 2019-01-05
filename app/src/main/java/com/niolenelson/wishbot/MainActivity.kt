@@ -7,7 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
+import kotlin.concurrent.schedule
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,6 +26,10 @@ class MainActivity : AppCompatActivity() {
         if (WishCalculator.isWishTime()) {
             Log.i("MainActivity", "Time to make a wish")
             inflater.inflate(R.layout.countdown_layout, activityLayout, true)
+            val counterContainer = findViewById<TextView>(R.id.counter)
+            val currentTime = LocalDateTime.now(ZoneId.systemDefault())
+            counterContainer.text = (60 - currentTime.second).toString()
+            handleCountdown(counterContainer)
         } else {
             val nextWishTime = Date(WishCalculator.getNextWishTime()).toString()
             Log.i("MainActivity", "Next wish time at: $nextWishTime.")
@@ -31,4 +38,20 @@ class MainActivity : AppCompatActivity() {
             nextWishDateContainer.text = nextWishTime
         }
     }
+
+    private fun handleCountdown(counterContainer: TextView) {
+        Timer("counter", false).schedule(1000) {
+            val currentTime = LocalDateTime.now(ZoneId.systemDefault())
+            val second = currentTime.second
+            counterContainer.text = (60 - second).toString()
+            if (second < 59) {
+                handleCountdown(counterContainer)
+            } else {
+               Timer("counter", false).schedule(1000) {
+                   counterContainer.text = "0"
+               }
+            }
+        }
+    }
+
 }
