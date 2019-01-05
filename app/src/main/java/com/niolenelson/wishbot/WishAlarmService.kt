@@ -73,7 +73,7 @@ class WishAlarmService : Service() {
         intent.action = RECEIVER_INTENT_ACTION_ID
         val alarmManager: AlarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pendingIntent = PendingIntent.getBroadcast(this, 1, intent, FLAG_CANCEL_CURRENT)
-        val nextAlertTime = WishCalculator().getNextWishTime()
+        val nextAlertTime = WishCalculator.getNextWishTime()
 
         val info = AlarmManager.AlarmClockInfo(nextAlertTime, pendingIntent)
         alarmManager.setAlarmClock(info, pendingIntent)

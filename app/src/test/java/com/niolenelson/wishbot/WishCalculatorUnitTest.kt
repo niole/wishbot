@@ -1,40 +1,72 @@
 package com.niolenelson.wishbot
 
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.mockito.Mockito.*
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class WishCalculatorUnitTest {
-    lateinit var wC: WishCalculator
-
-    @BeforeAll
-    fun beforeAll() {
-        wC = mock(WishCalculator::class.java)
-        `when`(wC.getNextWishTime()).thenCallRealMethod()
-        `when`(wC.isWishTime()).thenCallRealMethod()
-    }
-
-    @AfterAll
-    fun afterAll() {
-       println("DONE")
-    }
 
     @Test
     fun is_wish_time_when_month_day_hour_minute_equal() {
         val currentDate = LocalDateTime.of(1992, 5, 5, 5, 5)
-        `when`(wC.getCurrentDate()).thenReturn(currentDate)
-        assertTrue(wC.isWishTime())
+        assertTrue(WishCalculator.isWishTime(currentDate))
     }
 
     @Test
     fun isnt_wish_time_when_month_day_hour_minute_not_equal() {
         val currentDate = LocalDateTime.of(1992, 5, 5, 5, 6)
-        `when`(wC.getCurrentDate()).thenReturn(currentDate)
-        assertFalse(wC.isWishTime())
+        assertFalse(WishCalculator.isWishTime(currentDate))
     }
+
+    @Test
+    fun next_wish_time_should_be_after_1992_5month_5day_5hour_6minute() {
+        val currentDate = LocalDateTime.of(1992, 5, 5, 5, 6)
+
+        val currentDateMS = currentDate.format(DateTimeFormatter.BASIC_ISO_DATE).toLong()
+        val nextWishTime = WishCalculator.getNextWishTime(currentDate)
+
+        assertTrue(nextWishTime > currentDateMS)
+    }
+
+    @Test
+    fun next_wish_time_should_be_next_month_if_a_minute_past_wish_time() {
+        val currentDate = LocalDateTime.of(1992, 5, 5, 5, 6)
+
+        val expectedDate = LocalDateTime.of(1992, 6, 6, 6, 6)
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
+
+        assertEquals(Date(expectedDate), Date(WishCalculator.getNextWishTime(currentDate)))
+    }
+
+    @Test
+    fun next_wish_time_should_be_next_month_if_an_hour_past_wish_time() {
+        val currentDate = LocalDateTime.of(1992, 5, 5, 6, 5)
+
+        val expectedDate = LocalDateTime.of(1992, 6, 6, 6, 6)
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
+
+        assertEquals(Date(expectedDate), Date(WishCalculator.getNextWishTime(currentDate)))
+    }
+
+    @Test
+    fun next_wish_time_should_be_next_month_if_a_month_past_wish_time() {
+        val currentDate = LocalDateTime.of(1992, 6, 5, 5, 5)
+
+        val expectedDate = LocalDateTime.of(1992, 6, 6, 6, 6)
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
+
+        assertEquals(Date(expectedDate), Date(WishCalculator.getNextWishTime(currentDate)))
+    }
+
 }
