@@ -16,6 +16,7 @@ import android.support.v4.app.AlarmManagerCompat.setAlarmClock
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -23,8 +24,6 @@ import java.util.*
  * every time a wish time triggers, we set the next wish time
  */
 class WishAlarmService : Service() {
-
-    private var alarmSet: Boolean = false
 
     private val RECEIVER_INTENT_ACTION_ID = "com.niole.nelson.wishbot"
 
@@ -50,15 +49,12 @@ class WishAlarmService : Service() {
                 .setContentIntent(activityOpener)
                 .build()
             notificationManager?.notify(0, notification)
-            alarmSet = false
         }
     }
 
     override fun onCreate() {
         super.onCreate()
-        if (!alarmSet) {
-            setupAlarms()
-        }
+        setupAlarms()
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -74,20 +70,36 @@ class WishAlarmService : Service() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         this.registerReceiver(receiver, IntentFilter(RECEIVER_INTENT_ACTION_ID))
-        val intent = Intent()
-        intent.action = RECEIVER_INTENT_ACTION_ID
-        val alarmManager: AlarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val pendingIntent = PendingIntent.getBroadcast(this, 1, intent, FLAG_CANCEL_CURRENT)
-        val nextAlertTime = WishCalculator.getNextWishTime()
 
-        val info = AlarmManager.AlarmClockInfo(nextAlertTime, pendingIntent)
-        alarmManager.setAlarmClock(info, pendingIntent)
+        var nextAlertTime = WishCalculator.getNextWishTime()
+        for (i in 0..11) {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = nextAlertTime
+            calendar.add(Calendar.MINUTE, i * 1)
 
-        notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val time = WishCalculator.getNextWishTime(LocalDateTime.of(
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH) + 1,
+                calendar.get(Calendar.DAY_OF_MONTH),
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE)
+            ))
+            setAlarm(time)
+            nextAlertTime = time
+        }
 
         val channel = NotificationChannel(channelId, channelId, NotificationManager.IMPORTANCE_HIGH)
         notificationManager?.createNotificationChannel(channel)
+    }
 
-        alarmSet = true
+    private fun setAlarm(nextAlertTime: Long) {
+        val intent = Intent()
+        intent.action = RECEIVER_INTENT_ACTION_ID
+
+        val alarmManager: AlarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val pendingIntent = PendingIntent.getBroadcast(this, 1, intent, FLAG_CANCEL_CURRENT)
+
+        val info = AlarmManager.AlarmClockInfo(nextAlertTime, pendingIntent)
+        alarmManager.setAlarmClock(info, pendingIntent)
     }
 }

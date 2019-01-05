@@ -13,7 +13,7 @@ object WishCalculator {
         val hour = date.hour
         val minute = date.minute
 
-        return  month == day && month == hour && month == minute
+        return month == day && month == hour && month == minute
     }
 
     fun getNextWishTime(date: LocalDateTime? = LocalDateTime.now()): Long {
