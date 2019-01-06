@@ -1,11 +1,13 @@
 package com.niolenelson.wishbot
 
 import android.content.Intent
+import android.graphics.drawable.AnimationDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,7 +21,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        startFlow()
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+    }
+
+    private fun startFlow() {
         val serviceIntent = Intent(this.baseContext, WishAlarmService::class.java)
         this.baseContext.startService(serviceIntent)
         val activityLayout = findViewById<LinearLayout>(R.id.main)
@@ -41,12 +51,6 @@ class MainActivity : AppCompatActivity() {
             val nextWishDateContainer = findViewById<TextView>(R.id.future_wish_date)
             nextWishDateContainer.text = nextWishTime
         }
-
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
     }
 
     private fun handleCountdown(counterContainer: TextView) {
@@ -84,7 +88,28 @@ class MainActivity : AppCompatActivity() {
     }
 
    private fun onWish() {
-       findViewById<LinearLayout>(R.id.countdown_container).visibility = View.GONE
+       val inflater = LayoutInflater.from(applicationContext)
+       findViewById<LinearLayout>(R.id.main).removeAllViewsInLayout()
+       inflater.inflate(R.layout.successful_wish_layout, findViewById<LinearLayout>(R.id.main), true)
+
+       findViewById<Button>(R.id.back_button).setOnClickListener {
+           findViewById<LinearLayout>(R.id.main).removeAllViewsInLayout()
+           startFlow()
+       }
+
+       val colorAnimation = findViewById<LinearLayout>(R.id.rainbow_animation).background as AnimationDrawable
+       colorAnimation.setEnterFadeDuration(250)
+       colorAnimation.setExitFadeDuration(250)
+       colorAnimation.start()
+
+       val textAnimation = AnimationUtils.loadAnimation(this, R.anim.zoom_wish_text)
+       textAnimation.reset()
+       val hooray = findViewById<TextView>(R.id.hooray)
+       val may_wishes = findViewById<TextView>(R.id.may_wishes)
+       hooray.clearAnimation()
+       hooray.startAnimation(textAnimation)
+       may_wishes.clearAnimation()
+       may_wishes.startAnimation(textAnimation)
    }
 
 }
