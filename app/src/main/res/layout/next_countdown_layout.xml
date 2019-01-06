@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.widget.LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center_vertical"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
+        android:layout_marginTop="-70dp"
         android:textAlignment="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Next wish at"
+        android:text="Next wish on"
+        android:padding="24dp"
+        android:textSize="24dp"
     />
     <TextView
         android:textAlignment="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/future_wish_date"
+        android:padding="24dp"
+        android:textSize="48dp"
     />
 </android.widget.LinearLayout>

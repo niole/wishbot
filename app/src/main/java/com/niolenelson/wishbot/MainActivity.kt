@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -30,7 +31,17 @@ class MainActivity : AppCompatActivity() {
             counterContainer.text = (60 - currentTime.second).toString()
             handleCountdown(counterContainer)
         } else {
-            val nextWishTime = Date(WishCalculator.getNextWishTime()).toString()
+            val date = Calendar.getInstance()
+            date.timeInMillis = WishCalculator.getNextWishTime()
+
+            val nextWishTime = LocalDateTime.of(
+                date.get(Calendar.YEAR),
+                date.get(Calendar.MONTH) + 1,
+                date.get(Calendar.DAY_OF_MONTH),
+                date.get(Calendar.HOUR_OF_DAY),
+                date.get(Calendar.MINUTE)
+            ).format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm"))
+
             Log.i("MainActivity", "Next wish time at: $nextWishTime.")
             inflater.inflate(R.layout.next_countdown_layout, activityLayout, true)
             val nextWishDateContainer = findViewById<TextView>(R.id.future_wish_date)
