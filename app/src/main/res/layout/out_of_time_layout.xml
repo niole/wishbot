@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:gravity="center_vertical"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TextView
+            android:layout_marginTop="-50dp"
+            android:padding="24sp"
+            android:textAlignment="center"
+            android:textSize="35sp"
+            android:text="Oh, no!"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:layout_marginTop="-50dp"
+            android:padding="24sp"
+            android:textAlignment="center"
+            android:textSize="35sp"
+            android:text="Too slow."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:text="Make your next wish on"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:padding="24sp"
+            android:textAlignment="center"
+            android:textSize="45sp"
+            android:id="@+id/next_wish_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <Button
+            android:id="@+id/back_button"
+            android:layout_marginTop="45sp"
+            android:textColor="#FFFF"
+            android:background="@drawable/blue"
+            android:textAllCaps="false"
+            android:layout_gravity="center"
+            android:text="go back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+</LinearLayout>

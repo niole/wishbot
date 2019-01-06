@@ -63,6 +63,13 @@ class MainActivity : AppCompatActivity() {
             } else {
                Timer("counter", false).schedule(1000) {
                    counterContainer.text = "0"
+                   runOnUiThread {
+                       findViewById<LinearLayout>(R.id.main).removeAllViewsInLayout()
+                       val inflater = LayoutInflater.from(applicationContext)
+                       inflater.inflate(R.layout.out_of_time_layout, findViewById<LinearLayout>(R.id.main), true)
+                       setupGoBackButton()
+                       findViewById<TextView>(R.id.next_wish_time).text = formatTime(WishCalculator.getNextWishTime())
+                   }
                }
             }
         }
@@ -92,10 +99,7 @@ class MainActivity : AppCompatActivity() {
        findViewById<LinearLayout>(R.id.main).removeAllViewsInLayout()
        inflater.inflate(R.layout.successful_wish_layout, findViewById<LinearLayout>(R.id.main), true)
 
-       findViewById<Button>(R.id.back_button).setOnClickListener {
-           findViewById<LinearLayout>(R.id.main).removeAllViewsInLayout()
-           startFlow()
-       }
+        setupGoBackButton()
 
        val colorAnimation = findViewById<LinearLayout>(R.id.rainbow_animation).background as AnimationDrawable
        colorAnimation.setEnterFadeDuration(250)
@@ -112,4 +116,10 @@ class MainActivity : AppCompatActivity() {
        may_wishes.startAnimation(textAnimation)
    }
 
+   private fun setupGoBackButton() {
+       findViewById<Button>(R.id.back_button).setOnClickListener {
+           findViewById<LinearLayout>(R.id.main).removeAllViewsInLayout()
+           startFlow()
+       }
+   }
 }
