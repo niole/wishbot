@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import java.time.LocalDateTime
@@ -28,20 +30,12 @@ class MainActivity : AppCompatActivity() {
             inflater.inflate(R.layout.countdown_layout, activityLayout, true)
             val counterContainer = findViewById<TextView>(R.id.counter)
             val currentTime = LocalDateTime.now(ZoneId.systemDefault())
+            findViewById<TextView>(R.id.date).text = formatTime(Date().time)
+            findViewById<Button>(R.id.wish_button).setOnClickListener { onWish() }
             counterContainer.text = (60 - currentTime.second).toString()
             handleCountdown(counterContainer)
         } else {
-            val date = Calendar.getInstance()
-            date.timeInMillis = WishCalculator.getNextWishTime()
-
-            val nextWishTime = LocalDateTime.of(
-                date.get(Calendar.YEAR),
-                date.get(Calendar.MONTH) + 1,
-                date.get(Calendar.DAY_OF_MONTH),
-                date.get(Calendar.HOUR_OF_DAY),
-                date.get(Calendar.MINUTE)
-            ).format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm"))
-
+            val nextWishTime = formatTime(WishCalculator.getNextWishTime())
             Log.i("MainActivity", "Next wish time at: $nextWishTime.")
             inflater.inflate(R.layout.next_countdown_layout, activityLayout, true)
             val nextWishDateContainer = findViewById<TextView>(R.id.future_wish_date)
@@ -75,5 +69,22 @@ class MainActivity : AppCompatActivity() {
         val serviceIntent = Intent(this.baseContext, WishAlarmService::class.java)
         this.baseContext.startService(serviceIntent)
     }
+
+    private fun formatTime(time: Long): String {
+        val date = Calendar.getInstance()
+        date.timeInMillis = time
+
+        return LocalDateTime.of(
+            date.get(Calendar.YEAR),
+            date.get(Calendar.MONTH) + 1,
+            date.get(Calendar.DAY_OF_MONTH),
+            date.get(Calendar.HOUR_OF_DAY),
+            date.get(Calendar.MINUTE)
+        ).format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm"))
+    }
+
+   private fun onWish() {
+       findViewById<LinearLayout>(R.id.countdown_container).visibility = View.GONE
+   }
 
 }
