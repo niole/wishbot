@@ -44,18 +44,19 @@ class WishAlarmService : Service() {
         }
     }
 
+    override fun onBind(intent: Intent): IBinder? {
+        return mBinder
+    }
+
     override fun onCreate() {
         super.onCreate()
         setupAlarms()
     }
 
-    override fun onBind(intent: Intent): IBinder? {
-        return mBinder
-    }
-
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.i("WishAlarmService", "Received start id $startId: $intent")
-        return Service.START_NOT_STICKY
+        setupAlarms()
+        return Service.START_STICKY
     }
 
     private fun setupAlarms() {
@@ -68,7 +69,6 @@ class WishAlarmService : Service() {
             val alarmManager: AlarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val intent = Intent()
             intent.action = RECEIVER_INTENT_ACTION_ID
-            val pendingIntent = PendingIntent.getBroadcast(this, i, intent, 0)
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = nextAlertTime
             calendar.add(Calendar.MINUTE, i * 1)
@@ -81,6 +81,8 @@ class WishAlarmService : Service() {
                 calendar.get(Calendar.MINUTE)
             ))
 
+            val pendingIntent = PendingIntent.getBroadcast(this, time.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pendingIntent)
 
             nextAlertTime = time
@@ -88,5 +90,10 @@ class WishAlarmService : Service() {
 
         val channel = NotificationChannel(channelId, channelId, NotificationManager.IMPORTANCE_HIGH)
         notificationManager!!.createNotificationChannel(channel)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
     }
 }

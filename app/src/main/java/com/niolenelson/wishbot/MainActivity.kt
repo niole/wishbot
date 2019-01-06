@@ -14,9 +14,8 @@ import kotlin.concurrent.schedule
 
 class MainActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    override fun onStart() {
+        super.onStart()
 
         val serviceIntent = Intent(this.baseContext, WishAlarmService::class.java)
         this.baseContext.startService(serviceIntent)
@@ -37,6 +36,12 @@ class MainActivity : AppCompatActivity() {
             val nextWishDateContainer = findViewById<TextView>(R.id.future_wish_date)
             nextWishDateContainer.text = nextWishTime
         }
+
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
     }
 
     private fun handleCountdown(counterContainer: TextView) {
@@ -52,6 +57,12 @@ class MainActivity : AppCompatActivity() {
                }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val serviceIntent = Intent(this.baseContext, WishAlarmService::class.java)
+        this.baseContext.startService(serviceIntent)
     }
 
 }
