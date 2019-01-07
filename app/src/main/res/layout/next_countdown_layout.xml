@@ -25,4 +25,14 @@
         android:padding="24dp"
         android:textSize="48dp"
     />
+    <TextView
+            android:textColor="#FFFF"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You will be notified when it's time to make a wish again."
+            android:padding="24dp"
+            android:textSize="20dp"
+    />
+
 </android.widget.LinearLayout>
