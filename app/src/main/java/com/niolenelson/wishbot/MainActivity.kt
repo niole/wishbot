@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.LinearLayout
@@ -14,6 +13,7 @@ import android.widget.TextView
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -90,8 +90,9 @@ class MainActivity : AppCompatActivity() {
             date.get(Calendar.MONTH) + 1,
             date.get(Calendar.DAY_OF_MONTH),
             date.get(Calendar.HOUR_OF_DAY),
-            date.get(Calendar.MINUTE)
-        ).format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm"))
+            date.get(Calendar.MINUTE),
+            date.get(Calendar.SECOND)
+        ).format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
     }
 
    private fun onWish() {
