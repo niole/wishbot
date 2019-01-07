@@ -41,6 +41,7 @@ class WishAlarmService : Service() {
                 .setContentIntent(activityOpener)
                 .build()
             notificationManager?.notify(0, notification)
+            setupAlarms()
         }
     }
 
@@ -65,7 +66,7 @@ class WishAlarmService : Service() {
         this.registerReceiver(receiver, IntentFilter(RECEIVER_INTENT_ACTION_ID))
 
         var nextAlertTime = WishCalculator.getNextWishTime()
-        for (i in 0..11) {
+        for (i in 0..5) {
             val alarmManager: AlarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val intent = Intent()
             intent.action = RECEIVER_INTENT_ACTION_ID
