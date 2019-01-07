@@ -36,7 +36,7 @@ class WishAlarmService : Service() {
             val activityOpener = PendingIntent.getActivity(context, 1, activitySpec, PendingIntent.FLAG_UPDATE_CURRENT)
             val notification = NotificationCompat.Builder(applicationContext, channelId)
                 .setPriority(0)
-                .setSmallIcon(R.drawable.ic_android_black_24dp)
+                .setSmallIcon(R.drawable.star_icon)
                 .setContentText("It's time to make a wish!")
                 .setContentIntent(activityOpener)
                 .build()
